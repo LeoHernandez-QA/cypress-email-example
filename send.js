@@ -4,8 +4,8 @@ const transporter = require('./emailer')
 async function main() {
   // send an email
   const info = await transporter.sendMail({
-    from: '"Fred Blogger" <freg@blogger.com>',
-    to: 'gleb@startup.io', // list of receivers
+    from: process.dev.MAIL_SENDER_ADDRESS,
+    to: 'receiverqa@mailinator.com',
     subject: 'Hello ✔', // Subject line
     text: 'Hello world?', // plain text body
     html: '<b>Hello world?</b>', // html body

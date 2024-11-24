@@ -2,3 +2,5 @@ node_modules/
 .next/
 cypress/screenshots/
 sent-email.html
+.env
+cypress.env.json

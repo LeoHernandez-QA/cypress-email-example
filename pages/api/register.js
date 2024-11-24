@@ -18,11 +18,11 @@ export default async (req, res) => {
     // and then send an email
     try {
       const info = await emailer.sendMail({
-        from: '"Registration system" <reg@company.co>',
+        from: process.env.MAIL_SENDER_ADDRESS,
         to: email,
-        subject: 'Confirmation code 1️⃣2️⃣3️⃣',
+        subject: 'Confirmation code',
         text: 'Your confirmation code is 654agc',
-        html: confirmationEmailHTML,
+        html: confirmationEmailHTML
       })
       console.log('sent a confirmation email to %s', email)
 

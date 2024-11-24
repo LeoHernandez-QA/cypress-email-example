@@ -1,14 +1,19 @@
 const nodemailer = require('nodemailer')
 
-// create reusable transporter object using the default SMTP transport
-// the settings could come from .env file or environment variables
-const host = process.env.SMTP_HOST || 'localhost'
-const port = Number(process.env.SMTP_PORT || 7777)
+/*const transporter = nodemailer.createTransport({
+  host: process.env.MAIL_SMTP_HOST,
+  port: parseInt(process.env.MAIL_SMTP_PORT),
+  secure: true,
+  auth: {
+    user: process.env.MAIL_SENDER_ADDRESS,
+    pass: process.env.MAIL_SENDER_PASSWORD,
+  }
+});*/
 
 const transporter = nodemailer.createTransport({
-  host,
-  port,
-  secure: port === 456,
+  host: 'localhost',
+  port: 7777,
+  secure: false, // true for 465, false for other ports
 })
 
 module.exports = transporter
