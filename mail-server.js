@@ -8,8 +8,3 @@ mailServer.bind((addr, id, email) => {
   console.log('--- email ---')
   console.log(addr, id, email)
 })
-
-// mailServer.bind('cy-user@startup.io', (addr, id, email) => {
-//   console.log('--- email ---')
-//   console.log(addr, id, email)
-// })

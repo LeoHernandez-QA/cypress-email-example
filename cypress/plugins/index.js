@@ -6,7 +6,6 @@ const ms = require('smtp-tester')
  */
 module.exports = (on, config) => {
   // starts the SMTP server at localhost:7777
-  console.log()
   const port = config.env.MAIL_SMTP_PORT
   const mailServer = ms.init(port)
   console.log('mail server at port %d', port)

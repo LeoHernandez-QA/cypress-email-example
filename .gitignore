@@ -1,6 +1,13 @@
+# Node
 node_modules/
+
+# Next
 .next/
+
+# Cypress
 cypress/screenshots/
 sent-email.html
-.env
+
+# Environments
 cypress.env.json
+.env

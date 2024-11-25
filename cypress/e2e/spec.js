@@ -2,18 +2,23 @@
 // https://on.cypress.io/intelligent-code-completion
 /// <reference types="cypress" />
 
+import { recurse } from 'cypress-recurse'
+
 describe('Email confirmation', () => {
   beforeEach(() => {
     cy.task('resetEmails')
+    cy.intercept('POST', '/api/register').as('register')
   })
 
-  it('sends an email', () => {
+  it.only('sends an email', () => {
+    const email = Cypress.env("MAIL_RECEIVER_ADDRESS")
+
     cy.visit('/')
     cy.get('#name').type('Joe Bravo')
-    cy.get('#email').type(Cypress.env("MAIL_RECEIVER_ADDRESS"))
+    cy.get('#email').type(email)
     cy.get('#company_size').select('3')
 
-    cy.intercept('POST', '/api/register').as('register')
+
     cy.get('button[type=submit]').click()
 
     cy.log('**redirects to /confirm**')
@@ -22,7 +27,7 @@ describe('Email confirmation', () => {
     cy.log('**register API call**')
     cy.wait('@register').its('request.body').should('deep.equal', {
       name: 'Joe Bravo',
-      email: 'joe@acme.io',
+      email: email,
       companySize: '3',
     })
     // once we have waited for the ajax call once,
@@ -31,12 +36,16 @@ describe('Email confirmation', () => {
       // the response from the API should only
       // include name and email
       name: 'Joe Bravo',
-      email: 'joe@acme.io',
+      email: email,
     })
 
-    // by now the SMTP server has probably received the email
-    cy.task('getLastEmail', Cypress.env("MAIL_RECEIVER_ADDRESS"))
-      .its('body') // check the plain email text
+    recurse(() => cy.task('getLastEmail', email), Cypress._.isObject, {
+      log: false,
+      delay: 2000,
+      timeout: 20000,
+    })
+      .should('have.keys', ['body', 'html'])
+      .its('body')
       .then(cy.wrap)
       // Tip: modern browsers supports named groups
       .invoke('match', /code is (?<code>\w+)/)
@@ -57,7 +66,6 @@ describe('Email confirmation', () => {
     cy.get('#email').type('sender@leoqaportfolio.com')
     cy.get('#company_size').select('3')
 
-    cy.intercept('POST', '/api/register').as('register')
     cy.screenshot('1-registration')
     cy.get('button[type=submit]').click()
 

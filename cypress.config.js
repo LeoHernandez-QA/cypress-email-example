@@ -1,12 +1,12 @@
 const { defineConfig } = require('cypress')
 
 module.exports = defineConfig({
+  watchForFileChanges: false,
   fixturesFolder: false,
   viewportWidth: 1200,
   viewportHeight: 800,
   video: false,
   projectId: '9gzopg',
-  watchForFileChanges: false,
   e2e: {
     // We've imported your old cypress plugins here.
     // You may want to clean this up later by importing these.

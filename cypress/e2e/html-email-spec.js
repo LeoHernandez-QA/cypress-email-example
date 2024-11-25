@@ -2,29 +2,38 @@
 // https://on.cypress.io/intelligent-code-completion
 /// <reference types="cypress" />
 
+import { recurse } from 'cypress-recurse'
+
 describe('Email confirmation', () => {
   beforeEach(() => {
-    cy.intercept('/api/register').as('register')
     cy.task('resetEmails')
+    cy.intercept('/api/register').as('register')
   })
 
   it('sends an HTML email', () => {
+    const email = Cypress.env("MAIL_RECEIVER_ADDRESS")
+
     cy.visit('/')
     cy.get('#name').type('Joe Bravo')
-    cy.get('#email').type(Cypress.env("MAIL_RECEIVER_ADDRESS"))
+    cy.get('#email').type(email)
     cy.get('#company_size').select(3)
     cy.get('button[type=submit]').click()
+
     cy.wait('@register');
 
     cy.location('pathname').should('equal', '/confirm')
 
-    // by now the SMTP server has probably received the email
-    cy.task('getLastEmail', Cypress.env("MAIL_RECEIVER_ADDRESS"))
-      .its('html') // check the HTML email text
+    recurse(() => cy.task('getLastEmail', email), Cypress._.isObject, {
+      log: false,
+      delay: 2000,
+      timeout: 20000,
+    })
+      .should('have.keys', ['body', 'html'])
+      .its('html')
       .then((html) => {
-        // load the email in the current test browser
         cy.document().invoke('write', html)
       })
+
     cy.contains('#message', '654agc')
       .should('be.visible')
       // I have added small wait to make sure the video shows the email
