@@ -9,7 +9,8 @@ describe('Confirmation page', () => {
     cy.get('[data-cy=confirmed-code]').should('not.exist')
 
     cy.log('**enter the right code**')
-    cy.get('#confirmation_code').clear().type('654agc')
+    cy.get('#confirmation_code').clear()
+    cy.get('#confirmation_code').type('654agc')
     cy.get('button[type=submit]').click()
     cy.get('[data-cy=incorrect-code]').should('not.exist')
     cy.get('[data-cy=confirmed-code]').should('be.visible')

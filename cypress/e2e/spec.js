@@ -98,6 +98,7 @@ describe('Email confirmation', () => {
     cy.screenshot('2-the-email')
     // by now the HTML email should be displayed in the app iframe
     // let's confirm the confirmation code and the link
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.contains('654agc')
       .should('be.visible')
       // I have added small wait to make sure the video shows the email

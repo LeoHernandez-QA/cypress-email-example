@@ -19,7 +19,7 @@ describe('Email confirmation', () => {
     cy.get('#company_size').select(3)
     cy.get('button[type=submit]').click()
 
-    cy.wait('@register');
+    cy.wait('@register')
 
     cy.location('pathname').should('equal', '/confirm')
 
@@ -34,6 +34,7 @@ describe('Email confirmation', () => {
         cy.document().invoke('write', html)
       })
 
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.contains('#message', '654agc')
       .should('be.visible')
       // I have added small wait to make sure the video shows the email
