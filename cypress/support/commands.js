@@ -1,4 +1,4 @@
-import { recurse } from 'cypress-recurse'
+//import { recurse } from 'cypress-recurse'
 
 // ***********************************************
 // This example commands.js shows you how to
@@ -26,3 +26,21 @@ import { recurse } from 'cypress-recurse'
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
+Cypress.Commands.add('fetchMailinatorInbox', (receiver) => {
+  cy.fixture('fetchmessages.json').then((fetchedMessages) => {
+    cy.intercept(`${Cypress.env('MAILINATOR_API_URL')}/*`, fetchedMessages)
+  })
+
+  receiver = receiver.substring(0, receiver.indexOf('@'))
+  const fullApiUrl = `${Cypress.env('MAILINATOR_API_URL')}/${receiver}?token=${Cypress.env('MAILINATOR_API_TOKEN')}` //add &limit=1
+
+  
+  /*
+  cy.request({
+    method: `GET`,
+    url: fullApiUrl
+  }).then((response) => {
+    const messageId = response.body.msgs.find(messageId => response.body.msgs.seconds_ago < 20)
+    console.log(messageId)
+  })*/
+})

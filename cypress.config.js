@@ -1,5 +1,6 @@
 const { defineConfig } = require("cypress");
-const { config } = require('dotenv')
+//const { config } = require('dotenv')
+require('dotenv').config()
 
 module.exports = defineConfig({
   e2e: {
@@ -8,7 +9,7 @@ module.exports = defineConfig({
     watchForFileChanges: false,
     viewportWidth: 1200,
     viewportHeight: 800,
-    fixturesFolder: false,
+    //fixturesFolder: false,
     video: false,
     setupNodeEvents(on, config) {
       // implement node event listeners here
@@ -17,5 +18,5 @@ module.exports = defineConfig({
   },
   env: {
     ...process.env
-  },
+  }
 });

@@ -11,7 +11,7 @@ describe('Email confirmation', () => {
   })
 
   it('sends an HTML email', () => {
-    const email = Cypress.env("MAIL_RECEIVER_ADDRESS")
+    const email = Cypress.env('MAIL_RECEIVER_ADDRESS')
 
     cy.visit('/')
     cy.get('#name').type('Joe Bravo')
