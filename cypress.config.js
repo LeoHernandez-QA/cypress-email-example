@@ -1,5 +1,4 @@
 const { defineConfig } = require("cypress");
-//const { config } = require('dotenv')
 require('dotenv').config()
 
 module.exports = defineConfig({
