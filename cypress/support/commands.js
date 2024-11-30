@@ -1,4 +1,5 @@
-//import { recurse } from 'cypress-recurse'
+import { recurse } from 'cypress-recurse'
+import * as fetchedMessages from '../fixtures/fetchmessages.json'
 
 // ***********************************************
 // This example commands.js shows you how to
@@ -27,20 +28,33 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
 Cypress.Commands.add('fetchMailinatorInbox', (receiver) => {
-  cy.fixture('fetchmessages.json').then((fetchedMessages) => {
-    cy.intercept(`${Cypress.env('MAILINATOR_API_URL')}/*`, fetchedMessages)
-  })
 
-  receiver = receiver.substring(0, receiver.indexOf('@'))
-  const fullApiUrl = `${Cypress.env('MAILINATOR_API_URL')}/${receiver}?token=${Cypress.env('MAILINATOR_API_TOKEN')}` //add &limit=1
+  const teste = receiver.substring(0, receiver.indexOf('@'))
+  const getInboxUrl = `${Cypress.env('MAILINATOR_API_URL')}/inboxes/${teste}?token=${Cypress.env('MAILINATOR_API_TOKEN')}` //add &limit=1
+  const getMessageUrl = `${Cypress.env('MAILINATOR_API_URL')}/messages`
 
-  
+  const messageData = fetchedMessages.msgs.find(
+    (
+      email
+    ) =>
+      email.subject == "Confirmation code" &&
+      email.seconds_ago == 281  // < 20
+  )
+
   /*
   cy.request({
-    method: `GET`,
-    url: fullApiUrl
+    method: 'GET',
+    url: getInboxUrl
   }).then((response) => {
     const messageId = response.body.msgs.find(messageId => response.body.msgs.seconds_ago < 20)
     console.log(messageId)
   })*/
+
+  return cy.request({
+    method: 'GET',
+    url: `${getMessageUrl}/${messageData.id}?token=${Cypress.env('MAILINATOR_API_TOKEN')}`,
+  }).then((response) => {
+    expect(response.status).eq(200)
+    cy.wrap(JSON.stringify(response.body.parts).match(/code is (?<code>\w+)/), { log: false }).its('groups.code', { log: false })
+  })
 })
