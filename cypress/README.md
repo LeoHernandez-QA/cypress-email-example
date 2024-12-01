@@ -13,7 +13,7 @@ These folders hold the end-to-end tests and supporting files for the [Cypress Te
 
 ## `cypress.json` file
 
-You can configure project options in the [../cypress.json](../cypress.json) file, see [Cypress configuration doc](https://on.cypress.io/configuration).
+You can configure project options in the [../cypress.config.js](../cypress.config.js) file, see [Cypress configuration doc](https://on.cypress.io/configuration).
 
 ## More information
 

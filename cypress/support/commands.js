@@ -1,11 +1,9 @@
-import { recurse } from 'cypress-recurse'
-
 /**
  * Custom command that contains a recursive function that
  * waits the email message to arrive and then retrieves the
  * confirmation code from the body. 
  */
-Cypress.Commands.add('fetchMailinatorInbox', (receiver, timeout = 15000, interval = 5000) => {
+Cypress.Commands.add('fetchMailinatorInbox', (receiver, timeout = 15000, interval = 3000) => {
 
   // Extracts the part of the registered e-mail that comes before the '@'
   const emailPrefix = receiver.substring(0, receiver.indexOf('@'))
@@ -17,7 +15,8 @@ Cypress.Commands.add('fetchMailinatorInbox', (receiver, timeout = 15000, interva
   cy.wait(5000);
 
   // Recursive function
-  function getMessage() {    
+  function getMessage() {
+    
     // Retrieves a list of messages summaries.
     // We only need the ID.
     return cy.request({
@@ -32,11 +31,13 @@ Cypress.Commands.add('fetchMailinatorInbox', (receiver, timeout = 15000, interva
           email.subject == "Confirmation code" &&
           email.seconds_ago < 20
       )
+
       // If some validation get true, wait a little and try again (recurse)
       if (response.status !== 200 || !messageData || Date.now() > endTime) {
         cy.wait(interval)
         return getMessage()
       }
+
       // If everything goes well, call Mailinator message API to
       // retrieve the message content and extract the confirmation code.
       cy.request({
