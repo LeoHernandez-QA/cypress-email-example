@@ -13,11 +13,11 @@ Cypress.Commands.add('fetchMailinatorInbox', (receiver, timeout = 15000, interva
   const getMessageUrl = `${Cypress.env('MAILINATOR_API_URL')}/messages`
   const endTime = Date.now() + timeout
 
+  //Explicity wait 'till message arrives
+  cy.wait(5000);
+
   // Recursive function
-  function getMessage() {
-    //Explicity wait 'till message arrives
-    cy.wait(5000);
-    
+  function getMessage() {    
     // Retrieves a list of messages summaries.
     // We only need the ID.
     return cy.request({
@@ -44,7 +44,7 @@ Cypress.Commands.add('fetchMailinatorInbox', (receiver, timeout = 15000, interva
         url: `${getMessageUrl}/${messageData.id}?token=${Cypress.env('MAILINATOR_API_TOKEN')}`,
       }).then((response) => {
         expect(response.status).eq(200)
-        cy.wrap(JSON.stringify(response.body.parts).match(/code is (?<code>\w+)/), { log: false }).its('groups.code', { log: false })
+        cy.wrap(JSON.stringify(response.body.parts).match(/code is (?<code>\w+)/).groups.code) //, { log: false }).its('groups.code', { log: false })
       })
     })
   }

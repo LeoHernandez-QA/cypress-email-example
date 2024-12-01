@@ -1,9 +1,6 @@
 /// <reference types="cypress" />
 
 describe('Send real message', function () {
-  beforeEach(function () {
-    //TODO
-  })
 
   it('first mail', function () {
     // the destination email
