@@ -12,6 +12,7 @@ Cypress.Commands.add('fetchMailinatorInbox', (receiver, timeout = 15000, interva
   const endTime = Date.now() + timeout
 
   //Explicity wait 'till message arrives
+  // eslint-disable-next-line cypress/no-unnecessary-waiting
   cy.wait(5000);
 
   // Recursive function
@@ -34,6 +35,7 @@ Cypress.Commands.add('fetchMailinatorInbox', (receiver, timeout = 15000, interva
 
       // If some validation get true, wait a little and try again (recurse)
       if (response.status !== 200 || !messageData || Date.now() > endTime) {
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(interval)
         return getMessage()
       }
