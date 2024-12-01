@@ -1,60 +1,52 @@
 import { recurse } from 'cypress-recurse'
-import * as fetchedMessages from '../fixtures/fetchmessages.json'
 
-// ***********************************************
-// This example commands.js shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add('dismiss', { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+/**
+ * Custom command that contains a recursive function that
+ * waits the email message to arrive and then retrieves the
+ * confirmation code from the body. 
+ */
+Cypress.Commands.add('fetchMailinatorInbox', (receiver, timeout = 15000, interval = 5000) => {
 
-Cypress.Commands.add('fetchMailinatorInbox', (receiver) => {
-
-  const teste = receiver.substring(0, receiver.indexOf('@'))
-  const getInboxUrl = `${Cypress.env('MAILINATOR_API_URL')}/inboxes/${teste}?token=${Cypress.env('MAILINATOR_API_TOKEN')}` //add &limit=1
+  // Extracts the part of the registered e-mail that comes before the '@'
+  const emailPrefix = receiver.substring(0, receiver.indexOf('@'))
+  const getInboxUrl = `${Cypress.env('MAILINATOR_API_URL')}/inboxes/${emailPrefix}?token=${Cypress.env('MAILINATOR_API_TOKEN')}`
   const getMessageUrl = `${Cypress.env('MAILINATOR_API_URL')}/messages`
+  const endTime = Date.now() + timeout
 
-  const messageData = fetchedMessages.msgs.find(
-    (
-      email
-    ) =>
-      email.subject == "Confirmation code" &&
-      email.seconds_ago == 281  // < 20
-  )
-
-  /*
-  cy.request({
-    method: 'GET',
-    url: getInboxUrl
-  }).then((response) => {
-    const messageId = response.body.msgs.find(messageId => response.body.msgs.seconds_ago < 20)
-    console.log(messageId)
-  })*/
-
-  return cy.request({
-    method: 'GET',
-    url: `${getMessageUrl}/${messageData.id}?token=${Cypress.env('MAILINATOR_API_TOKEN')}`,
-  }).then((response) => {
-    expect(response.status).eq(200)
-    cy.wrap(JSON.stringify(response.body.parts).match(/code is (?<code>\w+)/), { log: false }).its('groups.code', { log: false })
-  })
+  // Recursive function
+  function getMessage() {
+    //Explicity wait 'till message arrives
+    cy.wait(5000);
+    
+    // Retrieves a list of messages summaries.
+    // We only need the ID.
+    return cy.request({
+      method: 'GET',
+      url: getInboxUrl,
+      retryOnNetworkFailure: true,
+      retryOnStatusCodeFailure: true
+    }).then((response) => {
+      // Get the last message and assign to messageData
+      const messageData = response.body.msgs.find(
+        (email) =>
+          email.subject == "Confirmation code" &&
+          email.seconds_ago < 20
+      )
+      // If some validation get true, wait a little and try again (recurse)
+      if (response.status !== 200 || !messageData || Date.now() > endTime) {
+        cy.wait(interval)
+        return getMessage()
+      }
+      // If everything goes well, call Mailinator message API to
+      // retrieve the message content and extract the confirmation code.
+      cy.request({
+        method: 'GET',
+        url: `${getMessageUrl}/${messageData.id}?token=${Cypress.env('MAILINATOR_API_TOKEN')}`,
+      }).then((response) => {
+        expect(response.status).eq(200)
+        cy.wrap(JSON.stringify(response.body.parts).match(/code is (?<code>\w+)/), { log: false }).its('groups.code', { log: false })
+      })
+    })
+  }
+  getMessage()
 })
