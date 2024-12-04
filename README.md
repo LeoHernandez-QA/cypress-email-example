@@ -1,22 +1,38 @@
 # cypress-email-example
-[![ci status][ci image]][ci url] [![badges status][badges image]][badges url] [![renovate-app badge][renovate-badge]][renovate-app] ![cypress version](https://img.shields.io/badge/cypress-9.7.0-brightgreen) [![cypress-email-example](https://img.shields.io/endpoint?url=https://dashboard.cypress.io/badge/simple/9gzopg/main&style=flat&logo=cypress)](https://dashboard.cypress.io/projects/9gzopg/runs)
 
-Sending emails using [nodemailer](https://nodemailer.com/about/), receive the using [smtp-tester](https://github.com/deitch/smtp-tester) and testing the received email using [Cypress](https://github.com/cypress-io/cypress).
+Sending emails using [nodemailer](https://nodemailer.com/about/), receive the using [smtp-tester](https://github.com/deitch/smtp-tester) or [Mailinator](https://www.mailinator.com/) and testing the received email using [Cypress](https://github.com/cypress-io/cypress).
+The Realmail branch uses Mailinator API to check the inbox and get the confirmation code, while the Dev branch uses a local receiver.
+![The HTML email test](./images/sending-real-email.gif)
 
-![The HTML email test](./images/html-email.gif)
+### Before you begin, create a .env file in the root directory:
+_You should replace this with real email data and sign up for a Mailinator account to obtain the API token._
 
-See [cypress/integration/spec.js](./cypress/integration/spec.js)
+```
+MAIL_SENDER_ADDRESS='your@mailtest.com'
+MAIL_SENDER_PASSWORD='testpassword'
+MAIL_SMTP_HOST='smtp.hostinger.com'
+MAIL_SMTP_PORT=465
+MAILINATOR_API_URL='https://api.mailinator.com/api/v2/domains/private'
+MAILINATOR_API_TOKEN='YourMailinatorTokenHere'
+MAIL_RECEIVER_ADDRESS='receiver@teamaaaaaa.testinator.com'
+```
 
-Read the blog post [Testing HTML Emails using Cypress](https://www.cypress.io/blog/2021/05/11/testing-html-emails-using-cypress/) and watch [this video](https://youtu.be/16WTH7XeIVw) where I explain the entire testing process.
-
-## Install and run
-
+## Install 
 ```shell
 $ npm install
+```
+
+## Cypress open
+```shell
 $ npm start
-# from another terminal
+# from another terminal:
 $ npx cypress open
-# click the spec.js
+# click the send-real-email-spec.js
+```
+
+## Headless mode
+```shell
+$ npm run test
 ```
 
 ## The application
@@ -26,14 +42,6 @@ The application shows the registration page [pages/index.js](./pages/index.js) w
 ## Email server
 
 The emails are sent using [nodemailer](https://nodemailer.com/about/), see [emailer.js](./emailer.js). During tests the SMTP server is running inside [cypress/plugins/index.js](./cypress/plugins/index.js) process.
-
-## Cypress tests
-
-- [cypress/integration/spec.js](./cypress/integration/spec.js) shows the full plain and HTML email test
-- [cypress/integration/confirm-spec.js](./cypress/integration/confirm-spec.js) runs E2E tests for the confirmation page in isolation
-- [cypress/integration/check-email-spec.js](./cypress/integration/check-email-spec.js) is an API test that calls the [pages/api/register.js](./pages/api/register.js) handler and confirms the handler sends an email
-
-The tests run on GitHub Actions, see the [.github/workflows/ci.yml](./.github/workflows/ci.yml) workflow. The results are recorded on [Cypress Dashboard](https://dashboard.cypress.io/projects/9gzopg/runs).
 
 [ci image]: https://github.com/bahmutov/cypress-email-example/workflows/ci/badge.svg?branch=main
 [ci url]: https://github.com/bahmutov/cypress-email-example/actions

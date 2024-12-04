@@ -7,6 +7,8 @@ node_modules/
 # Cypress
 cypress/screenshots/
 sent-email.html
+cypress/fixtures/
+cypress/videos/
 
 # Environments
 cypress.env.json

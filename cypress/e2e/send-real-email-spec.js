@@ -48,5 +48,7 @@ describe('Send real message', function () {
       cy.get('[data-cy=incorrect-code]').should('not.exist')
       cy.get('[data-cy=confirmed-code]').should('be.visible')
     })
+
+    cy.wait(1000)
   })
 })
