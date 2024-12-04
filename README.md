@@ -2,9 +2,10 @@
 
 Sending emails using [nodemailer](https://nodemailer.com/about/), receive the using [smtp-tester](https://github.com/deitch/smtp-tester) or [Mailinator](https://www.mailinator.com/) and testing the received email using [Cypress](https://github.com/cypress-io/cypress).
 The Realmail branch uses Mailinator API to check the inbox and get the confirmation code, while the Dev branch uses a local receiver.
+
 ![The HTML email test](./images/sending-real-email.gif)
 
-### Before you begin, create a .env file in the root directory:
+### Before start, create a .env file in the root directory:
 _You should replace this with real email data and sign up for a Mailinator account to obtain the API token._
 
 ```
